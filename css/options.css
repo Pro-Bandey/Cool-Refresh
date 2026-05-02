@@ -1,0 +1,53 @@
+.shapes {
+  box-sizing: border-box;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fill, 48px);
+  gap: 16px;
+  justify-content: flex-start;
+  max-width: 100%;
+  overflow: auto;
+  padding: 1rem !important;
+  border-bottom: 1px solid var(--third);
+}
+
+.shape {
+  background: var(--md-sys-color-surface-variant);
+  box-sizing: border-box;
+  display: inline-block;
+  flex-shrink: 0;
+  height: 48px;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  transition: transform .2s cubic-bezier(0.2, 0, 0, 1), background .2s, box-shadow .2s;
+  width: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.shape:hover {
+  transform: scale(1.1);
+  box-shadow: var(--md-elevation-1);
+}
+
+.shape-fg {
+  border: 2px solid var(--md-sys-color-outline-variant);
+}
+
+.shape-selected {
+  background: var(--md-sys-color-primary);
+  border-color: var(--md-sys-color-primary);
+  transform: scale(1.1);
+  box-shadow: var(--md-elevation-1);
+}
+
+.shape[data-shape-name="empty"] {
+  background: none;
+  border: 2px dotted var(--md-sys-color-outline);
+  border-radius: 50%;
+}
+
+.shape-selected[data-shape-name="empty"] {
+  background: none;
+  border: 2px solid var(--md-sys-color-primary);
+}

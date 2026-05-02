@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="css/options_common.css">
+  <link rel="stylesheet" href="css/options.css">
+  <link rel="icon" type="image/png" href="icons/icon64.png">
+  <title>Settings - Cool Refresh</title>
+</head>
+
+<body>
+  <div class="title">
+    <img src="icons/128.png" alt="logo" />
+    <h1>Cool Refresh</h1>
+  </div>
+
+  <h2 class="i18n">Foreground</h2>
+  <div class="item">
+    <div class="color-preview-container checker">
+      <div class="color-preview" data-targetId="fgcolor"></div>
+    </div>
+    <input id="fgcolor" class="text-input color-text-input js-binding">
+  </div>
+  <div class="item shapes" id="fgshape">
+  </div>
+
+  <h2 class="i18n">Background</h2>
+  <div class="item">
+    <div class="color-preview-container checker">
+      <div class="color-preview" data-targetId="bgcolor"></div>
+    </div>
+    <input id="bgcolor" class="text-input color-text-input js-binding">
+  </div>
+  <div class="item shapes" id="bgshape">
+  </div>
+
+  <h2 class="i18n">Shadow</h2>
+  <div class="item">
+    <div class="color-preview-container checker">
+      <div class="color-preview" data-targetId="shcolor"></div>
+    </div>
+    <input id="shcolor" class="text-input color-text-input js-binding">
+  </div>
+
+  <h2 class="i18n">Animation</h2>
+  <label class="item radio-label">
+    <input type="radio" name="animation" value="rotate" class="js-binding">
+    <span class="i18n">Rotate</span>
+  </label>
+  <label class="item radio-label">
+    <input type="radio" name="animation" value="flash" class="js-binding">
+    <span class="i18n">Flash</span>
+  </label>
+  <label class="item radio-label">
+    <input type="radio" name="animation" value="coin" class="js-binding">
+    <span class="i18n">Coin</span>
+  </label>
+
+  <h2 class="i18n">Pull Distance</h2>
+  <label class="item radio-label">
+    <input type="radio" name="distance" value="12" class="js-binding">
+    <span class="i18n">Short</span>
+  </label>
+  <label class="item radio-label">
+    <input type="radio" name="distance" value="24" class="js-binding">
+    <span class="i18n">Middle</span>
+  </label>
+  <label class="item radio-label">
+    <input type="radio" name="distance" value="36" class="js-binding">
+    <span class="i18n">Long</span>
+  </label>
+
+  <h2 class="i18n">Others</h2>
+  <label class="item checkbox-label">
+    <span class="i18n">pageBottom</span>
+    <input id="pageBottom" class="js-binding" type="checkbox" value="true">
+  </label>
+
+  <div id="denylistEdit" class="item">
+    <label class="caption i18n">Denylist</label>
+    <div id="denylistSummary" class="summary">None</div>
+  </div>
+
+  <h2 class="i18n">Export / Import</h2>
+  <div class="item" style="display: flex;justify-content: space-between;">
+    <label id="exportSetting" class="icon-export button buttons-vertical i18n">Export settings to downloads</label><a
+      id="exportSettingLink" download="cool_refresh.json" class="hide"></a><br>
+    <label for="importSetting" class="icon-import button buttons-vertical i18n">Import settings from JSON</label><input
+      type="file" id="importSetting" accept="application/json" class="hide">
+  </div>
+
+  <!-- Components -->
+
+  <div id="colorDlg" class="dlg transparent">
+    <div class="dlg-container">
+      <div id="pallet"></div>
+      <div class="checker slider">
+        <input id="sliderA" class="slider" type="range" min="0" max="255" value="255">
+      </div>
+      <div class="buttons">
+        <span class="button icon-cancel js-history-back i18n">cancel</span>
+        <span class="button icon-save js-submit i18n">save</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="denylistDlg" class="dlg transparent">
+    <div class="dlg-container">
+      <label class="caption i18n">Denylist</label>
+      <div id="denylist"></div>
+      <div class="buttons">
+        <span class="button icon-cancel js-history-back i18n">cancel</span>
+        <span class="button icon-save js-submit i18n">save</span>
+      </div>
+    </div>
+  </div>
+  <div class="hide">
+    <div class="denylist-item">
+      <input type="url" class="text-input denylist-input" placeholder="https://url.starts.with/this"><span
+        class="delete-denylist button icon-delete"></span>
+    </div>
+  </div>
+
+  <div id="cover"></div>
+
+  <script src="js/content.js"></script>
+  <script src="js/options_common.js"></script>
+  <script src="js/options.js"></script>
+</body>
+
+</html>

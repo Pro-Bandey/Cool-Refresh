@@ -1,0 +1,229 @@
+// constraints -------
+// Default settings
+var CoolRefresh = {};
+CoolRefresh.ini = {
+  css: `
+    all: initial;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle fill="%2352525e" cx="12" cy="12" r="12"/><path stroke="%23f9f9fa" fill="none" stroke-linecap="round" d="M15 14.7a4 4 0 1 1 1-2m-1.5-1l1.5 1.5 1.5-1.5"/></svg>');
+    filter: drop-shadow(0 0 5px #0003);
+    background-size: 48px 48px;
+    height: 48px;
+    width: 48px;
+    transition: transform 300ms cubic-bezier(0.2, 0, 0, 1), opacity 300ms ease;
+    display: inline-block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    z-index: 2147483647;
+    will-change: transform, opacity;
+  `,
+  bgshape: 'circle',
+  bgcolor: '#52525e',
+  fgcolor: '#f9f9fa',
+  fgshape: 'default',
+  shcolor: '#00000033',
+  shsize: 5,
+  size: 48,
+  delay: 300,
+  animation: 'rotate',
+  distance: '24',
+  pageBottom: false,
+  denylist:[],
+  version: 0,
+};
+const MARGIN_HIDE = 16;
+const VV = window.visualViewport;
+const POS_TOP = 1;
+const POS_BOTTOM = -1;
+
+// fields ------------
+let icon = null;
+let icons = [null, null];
+let isActive = false;
+let isReady = false;
+let touchStartTime = 0;
+let sx = 0; // start X
+let sy = 0; // start Y
+let ly = 0; // last Y
+let dy = 0; // delta Y
+let scrollY = 0;
+let pos = 1;
+let strokeSize = 0;
+let distance = 24;
+
+// utilities ---------
+const getXY = e => {
+  const t = e.touches[0];
+  return[t.pageX, t.pageY];
+};
+
+const getScrollY = e => {
+  return e?.scrollTop || e && getScrollY(e.parentNode);
+}
+
+// icon --------------
+const createIcon = () => {
+  const idx = pos + 1;
+  icon = icons[idx];
+  if (icon) return;
+  icon = document.createElement('DIV');
+  applyCss();
+  document.body.appendChild(icon);
+  icons[idx] = icon;
+};
+
+const applyCss = () => {
+  icon.style.cssText = CoolRefresh.ini.css;
+  if (pos === POS_BOTTOM) {
+    icon.style.top = '';
+    icon.style.bottom = '0';
+  }
+  hide();
+};
+
+const setTranslate = (top, deg, scale = 1, opacity = 1) => {
+  if (!icon) return;
+  icon.style.transform = `
+    translate(
+      ${VV.width / 2 + VV.offsetLeft - CoolRefresh.ini.size / 2}px,
+      ${top}px
+    )
+    rotateZ(${deg}deg)
+    scale(${scale / VV.scale})
+  `;
+  if (opacity !== 1) {
+    icon.style.opacity = opacity;
+  }
+};
+
+const show = () => {
+  createIcon();
+  setTranslate(pos * distance / VV.scale, 0);
+};
+
+const hide = () => {
+  const a = CoolRefresh.ini.size + MARGIN_HIDE / VV.scale;
+  setTranslate(-pos * a, -360);
+};
+
+const animate = () => {
+  switch (CoolRefresh.ini.animation) {
+    case 'rotate':
+      icon.animate(
+        { transform:[
+          icon.style.transform + ' rotateZ(0deg)',
+          icon.style.transform + ' rotateZ(360deg)'
+        ] },
+        { iterations: Infinity, duration: 1500, easing: 'linear' }
+      );
+      break;
+    case 'coin':
+      icon.animate(
+        { transform:[
+          icon.style.transform + ' rotateY(0deg)',
+          icon.style.transform + ' rotateY(360deg)'
+        ] },
+        { iterations: Infinity, duration: 1000, easing: 'linear' }
+      );
+      break;
+    default:
+      setTranslate(pos * distance / VV.scale, 0, 1.5, 0);
+  }
+}
+
+// touch-events ------
+const onPointerDown = e => {
+  isReady = false;
+  isActive = true;
+  touchStartTime = Date.now();
+  [sx, sy] = getXY(e);
+  ly = sy;
+  dy = 0;
+  scrollY = getScrollY(e.target);
+  strokeSize = (distance + CoolRefresh.ini.size) / VV.scale;
+};
+
+const onTouchStart = e => {
+  if (e.touches.length === 1) {
+    onPointerDown(e);
+  } else {
+    cancel();
+  }
+};
+
+const onPointerMove = e => {
+  if (!isActive) return;
+  const [x, y] = getXY(e);
+  if (strokeSize < Math.abs(x - sx)) {
+    cancel();
+    return;
+  }
+  if (y < ly && 0 < dy || ly < y && dy < 0) {
+    cancel();
+    return;
+  }
+  ly = y
+  dy = y - sy;
+  if (dy < 0 && !CoolRefresh.ini.pageBottom)  {
+    cancel();
+    return;
+  }
+  if (scrollY !== getScrollY(e.target)) {
+    cancel();
+    return;
+  }
+  if (strokeSize < Math.abs(dy)) {
+    pos = 0 < dy ? POS_TOP : POS_BOTTOM;
+    show();
+    isReady = true;
+  }
+};
+
+const onPointerUp = () => {
+  if (!isReady) return;
+  if (CoolRefresh.ini.delay < Date.now() - touchStartTime) {
+    animate();
+    CoolRefresh.reload();
+  } else {
+    cancel();
+  }
+};
+
+const onScroll = () => {
+  if (!isActive) return;
+  cancel();
+}
+
+// control -----------
+const cancel = () => {
+  isActive = false;
+  isReady = false;
+  hide();
+};
+
+CoolRefresh.reload = () => { location.reload(); };
+
+CoolRefresh.loadIni = async () => {
+  const res = await browser.storage.local.get('cool_refresh');
+  if (res?.cool_refresh) {
+    Object.assign(CoolRefresh.ini, res.cool_refresh);
+    distance = CoolRefresh.ini.distance|0;
+  }
+  if (icon) {
+    applyCss();
+  }
+};
+
+// START HERE ! ------
+(async () => {
+  await CoolRefresh.loadIni();
+  for (const d of CoolRefresh.ini.denylist) {
+    if (location.href.startsWith(d.url)) return;
+  }
+  addEventListener('touchstart', onTouchStart, { passive: true });
+  addEventListener('touchmove', onPointerMove, { passive: true });
+  addEventListener('touchend', onPointerUp, { passive: true });
+  addEventListener('scroll', onScroll, { passive: true });
+  VV.addEventListener('scroll', onScroll, { passive: true });
+})();
