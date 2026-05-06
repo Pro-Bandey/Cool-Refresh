@@ -33,7 +33,6 @@ const SHAPES = {
     { name: 'umbrella', svg: '<g fill="{fg}" transform="rotate(-30 12 12) translate(7 7) scale(0.4)"><path d="M1.5 15c-4-18 25-18 21 0q-3.5-2-7 0-3.5-2-7 0-3.5-2-7 0"/><circle cx="12" cy="1" r="1"/><path d="M11 13v7q0 4 4 4 4 0 4-4h-2q0 2-2 2-2 0-2-2v-7"/></g>' },
     { name: 'spiral', svg: '<path stroke="{fg}" fill="none" d="M12 12 c1.8 0 1.8 2.16 0 2.4 c-3 0-3-4.2 0-4.44 c4.56-0.6 5.04 6.6 0 6.72 c-6-0.24-6-8.4 0-8.88 c3.6-0.24 6 2.4 5.76 6 "/>' },
     { name: 'face', svg: '<path stroke="{fg}" fill="none" d="M 9 13q1.5 2 3 0q1.5 2 3 0m2-3v2m-10 0v-2"/>' },
-    { name: 'face', svg: '<path stroke="{fg}" fill="none" d="M 9 13q1.5 2 3 0q1.5 2 3 0m2-3v2m-10 0v-2"/>' },
     { name: 'smilleglassses', svg: '<path stroke="{fg}" fill="none" d="M5.2 9.2h4.8v3.8H5.2zM14 9.2h4.8v3.8H14zM10 11.1h4M8.7 15.4c.9 1.1 2 1.7 3.3 1.7s2.4-.6 3.3-1.7"/>' },
     { name: 'glasses', svg: '<path stroke="{fg}" fill="none" d="M2 9c0-1 0.8-2 2-2h4c1.2 0 2 1 2 2v1h4V9c0-1 0.8-2 2-2h4c1.2 0 2 1 2 2v3c0 1.7-1.3 3-3 3h-2c-1.7 0-3-1.3-3-3v-1H10v1c0 1.7-1.3 3-3 3H5c-1.7 0-3-1.3-3-3V9z"/><path stroke="{fg}" opacity="0.15" d="M4 9h4v2H4zM16 9h4v2h-4z"/>' },
     { name: 'cloud', svg: '<path fill="{fg}" d="M9 18a4 4 0 1 1 .7-7.94A5 5 0 0 1 19 12a3 3 0 0 1-1 5.83H9z"/>' },
