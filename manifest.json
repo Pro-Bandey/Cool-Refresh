@@ -3,6 +3,7 @@
   "name": "Cool Refresh",
   "version": "12.0.0",
   "description": "Customizable pull-to-refresh instead of the built-in one.",
+  "homepage_url": "https://Pro-Bandey.github.io/Projects/?Pro=Cool-Refresh",
 
   "options_ui": {
     "page": "index.html",
