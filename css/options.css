@@ -1,7 +1,6 @@
 .shapes {
   box-sizing: border-box;
   display: grid;
-  justify-content: center;
   grid-template-columns: repeat(auto-fill, 48px);
   gap: 16px;
   justify-content: flex-start;
@@ -28,6 +27,12 @@
 .shape:hover {
   transform: scale(1.1);
   box-shadow: var(--md-elevation-1);
+}
+
+/* Clear focus outline for keyboard-navigating users */
+.shape:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 3px;
 }
 
 .shape-fg {

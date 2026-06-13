@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="css/options_common.css">
   <link rel="stylesheet" href="css/options.css">
-  <link rel="icon" type="image/png" href="icons/icon64.png">
+  <link rel="icon" type="image/png" href="icons/32.png">
   <title>Settings - Cool Refresh</title>
 </head>
 
@@ -21,7 +21,7 @@
     <div class="color-preview-container checker">
       <div class="color-preview" data-targetId="fgcolor"></div>
     </div>
-    <input id="fgcolor" class="text-input color-text-input js-binding">
+    <input id="fgcolor" class="text-input color-text-input js-binding" aria-label="Foreground Color Hex Code">
   </div>
   <div class="item shapes" id="fgshape">
   </div>
@@ -31,7 +31,7 @@
     <div class="color-preview-container checker">
       <div class="color-preview" data-targetId="bgcolor"></div>
     </div>
-    <input id="bgcolor" class="text-input color-text-input js-binding">
+    <input id="bgcolor" class="text-input color-text-input js-binding" aria-label="Background Color Hex Code">
   </div>
   <div class="item shapes" id="bgshape">
   </div>
@@ -41,7 +41,7 @@
     <div class="color-preview-container checker">
       <div class="color-preview" data-targetId="shcolor"></div>
     </div>
-    <input id="shcolor" class="text-input color-text-input js-binding">
+    <input id="shcolor" class="text-input color-text-input js-binding" aria-label="Shadow Color Hex Code">
   </div>
 
   <h2 class="i18n">Animation</h2>
@@ -78,48 +78,51 @@
     <input id="pageBottom" class="js-binding" type="checkbox" value="true">
   </label>
 
-  <div id="denylistEdit" class="item">
+  <div id="denylistEdit" class="item" role="button" tabindex="0">
     <label class="caption i18n">Denylist</label>
     <div id="denylistSummary" class="summary">None</div>
   </div>
 
   <h2 class="i18n">Export / Import</h2>
   <div class="item" style="display: flex;justify-content: space-between;">
-    <label id="exportSetting" class="icon-export button buttons-vertical i18n">Export settings to downloads</label><a
-      id="exportSettingLink" download="cool_refresh.json" class="hide"></a><br>
-    <label for="importSetting" class="icon-import button buttons-vertical i18n">Import settings from JSON</label><input
-      type="file" id="importSetting" accept="application/json" class="hide">
+    <button type="button" id="exportSetting" class="icon-export button buttons-vertical i18n">Export settings to
+      downloads</button>
+    <a id="exportSettingLink" download="cool_refresh.json" class="hide"></a>
+    <br>
+    <label for="importSetting" class="icon-import button buttons-vertical i18n">Import settings from JSON</label>
+    <input type="file" id="importSetting" accept="application/json" class="hide">
   </div>
 
   <!-- Components -->
 
-  <div id="colorDlg" class="dlg transparent">
+  <div id="colorDlg" class="dlg transparent" role="dialog" aria-modal="true" aria-label="Color Picker">
     <div class="dlg-container">
       <div id="pallet"></div>
       <div class="checker slider">
-        <input id="sliderA" class="slider" type="range" min="0" max="255" value="255">
+        <input id="sliderA" class="slider" type="range" min="0" max="255" value="255" aria-label="Alpha Transparency">
       </div>
       <div class="buttons">
-        <span class="button icon-cancel js-history-back i18n">cancel</span>
-        <span class="button icon-save js-submit i18n">save</span>
+        <button type="button" class="button icon-cancel js-history-back i18n">cancel</button>
+        <button type="button" class="button icon-save js-submit i18n">save</button>
       </div>
     </div>
   </div>
 
-  <div id="denylistDlg" class="dlg transparent">
+  <div id="denylistDlg" class="dlg transparent" role="dialog" aria-modal="true" aria-label="Denylist Manager">
     <div class="dlg-container">
       <label class="caption i18n">Denylist</label>
       <div id="denylist"></div>
       <div class="buttons">
-        <span class="button icon-cancel js-history-back i18n">cancel</span>
-        <span class="button icon-save js-submit i18n">save</span>
+        <button type="button" class="button icon-cancel js-history-back i18n">cancel</button>
+        <button type="button" class="button icon-save js-submit i18n">save</button>
       </div>
     </div>
   </div>
   <div class="hide">
     <div class="denylist-item">
-      <input type="url" class="text-input denylist-input" placeholder="https://url.starts.with/this"><span
-        class="delete-denylist button icon-delete"></span>
+      <input type="url" class="text-input denylist-input" placeholder="https://url.starts.with/this"
+        aria-label="Denylist Pattern URL">
+      <button type="button" class="delete-denylist button icon-delete" aria-label="Delete Entry"></button>
     </div>
   </div>
 

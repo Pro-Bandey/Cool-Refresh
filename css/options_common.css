@@ -134,9 +134,12 @@ h2 {
     background-color: color-mix(in srgb, var(--bg-color) 90%, var(--third));
 }
 
-
 .item:last-of-type {
     border-bottom: none;
+}
+
+#denylistEdit {
+    cursor: pointer;
 }
 
 .any-items-container {
@@ -362,6 +365,7 @@ input[type="checkbox"] {
     text-align: center;
     transition: opacity .3s ease;
     z-index: 20;
+    will-change: opacity;
 }
 
 .dlg-fill {
@@ -550,6 +554,8 @@ input[type="checkbox"] {
     font-size: 0.85rem;
     -webkit-tap-highlight-color: transparent;
     /* Better mobile tap feedback */
+    font-family: inherit;
+    line-height: inherit;
 }
 
 .button:hover {
@@ -600,6 +606,13 @@ input[type="checkbox"] {
 .icon-delete::before {
     background: var(--red);
     mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke="black" stroke-width="1.5" fill="none"><path d="M3 4h10M5 4v9q0 1 1 1h4q1 0 1-1v-9M6.5 6v5M9.5 6v5M6 4q0 -2 2-2 2 0 2 2"/></svg>');
+}
+
+/* === ACCESSIBILITY INDICATORS === */
+.button:focus-visible,
+#denylistEdit:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
 }
 
 /* === DESKTOP & TABLET STYLES === */

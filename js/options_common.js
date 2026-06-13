@@ -206,6 +206,9 @@ dlgs.colorDlg = {
       t.className = 'color-tile';
       t.style.background = c;
       t.setAttribute('data-c', c);
+      t.setAttribute('tabindex', '0');
+      t.setAttribute('role', 'button');
+      t.setAttribute('aria-label', `Select color ${c}`);
       // only white, gray and black have border.
       if (c === '#f9f9fa' || c === '#52525e' || c === '#23222b') {
         t.className += ' color-tile-with-border'
@@ -224,7 +227,11 @@ dlgs.colorDlg = {
       elm.setAttribute('placeholder', settings.insteadOfEmpty[elm.id]);
       dlgs.colorDlg.onInputText({ target: elm });
       elm.addEventListener('input', dlgs.colorDlg.onInputText);
-      dlgs.colorDlg.getPreview(elm).addEventListener('click', dlgs.colorDlg.onClickPreview);
+      const preview = dlgs.colorDlg.getPreview(elm);
+      preview.setAttribute('role', 'button');
+      preview.setAttribute('tabindex', '0');
+      preview.setAttribute('aria-label', `Choose custom color for ${elm.id}`);
+      preview.addEventListener('click', dlgs.colorDlg.onClickPreview);
     }
   },
 };
@@ -368,6 +375,17 @@ comp.common = {
         const f = dlgs[openedDlg.id].onSubmit;
         f && f();
         history.back();
+      }
+    });
+
+    // keyboard accessibility trigger for simulated button elements
+    addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        const role = e.target.getAttribute('role');
+        if (role === 'button' || e.target.id === 'denylistEdit') {
+          e.preventDefault();
+          e.target.click();
+        }
       }
     });
   },

@@ -29,11 +29,19 @@ CoolRefresh.ini = {
   animation: 'rotate',
   distance: '24',
   pageBottom: false,
-  denylist:[],
+  denylist: [],
   version: 0,
 };
 const MARGIN_HIDE = 16;
-const VV = window.visualViewport;
+
+// Safe Visual Viewport fallback wrapper
+const VV = window.visualViewport || {
+  width: window.innerWidth,
+  offsetLeft: 0,
+  scale: 1,
+  addEventListener: () => { }
+};
+
 const POS_TOP = 1;
 const POS_BOTTOM = -1;
 
@@ -48,19 +56,42 @@ let sy = 0; // start Y
 let ly = 0; // last Y
 let dy = 0; // delta Y
 let scrollY = 0;
+let scrollContainer = null;
 let pos = 1;
 let strokeSize = 0;
 let distance = 24;
 
+// High-performance animation scheduling properties
+let rafsScheduled = false;
+let queuedStyles = null;
+
 // utilities ---------
 const getXY = e => {
   const t = e.touches[0];
-  return[t.pageX, t.pageY];
+  return [t.pageX, t.pageY];
 };
 
-const getScrollY = e => {
-  return e?.scrollTop || e && getScrollY(e.parentNode);
-}
+// Find the scroll container exactly once per touch lifecycle
+const getScrollParent = el => {
+  let node = el;
+  while (node && node !== document.body && node !== document.documentElement) {
+    const style = window.getComputedStyle(node);
+    const overflowY = style.overflowY;
+    if ((overflowY === 'auto' || overflowY === 'scroll') && node.scrollHeight > node.clientHeight) {
+      return node;
+    }
+    node = node.parentNode;
+  }
+  return window;
+};
+
+// Fetch scroll coordinates smoothly without deep recursion
+const getScrollPos = el => {
+  if (!el || el === window) {
+    return window.scrollY || document.documentElement.scrollTop;
+  }
+  return el.scrollTop;
+};
 
 // icon --------------
 const createIcon = () => {
@@ -82,8 +113,13 @@ const applyCss = () => {
   hide();
 };
 
-const setTranslate = (top, deg, scale = 1, opacity = 1) => {
-  if (!icon) return;
+// Scheduled animation frame updates
+const performStyleUpdate = () => {
+  if (!queuedStyles || !icon) {
+    rafsScheduled = false;
+    return;
+  }
+  const { top, deg, scale, opacity } = queuedStyles;
   icon.style.transform = `
     translate(
       ${VV.width / 2 + VV.offsetLeft - CoolRefresh.ini.size / 2}px,
@@ -92,8 +128,17 @@ const setTranslate = (top, deg, scale = 1, opacity = 1) => {
     rotateZ(${deg}deg)
     scale(${scale / VV.scale})
   `;
-  if (opacity !== 1) {
+  if (opacity !== undefined) {
     icon.style.opacity = opacity;
+  }
+  rafsScheduled = false;
+};
+
+const setTranslate = (top, deg, scale = 1, opacity = 1) => {
+  queuedStyles = { top, deg, scale, opacity };
+  if (!rafsScheduled) {
+    rafsScheduled = true;
+    requestAnimationFrame(performStyleUpdate);
   }
 };
 
@@ -111,19 +156,23 @@ const animate = () => {
   switch (CoolRefresh.ini.animation) {
     case 'rotate':
       icon.animate(
-        { transform:[
-          icon.style.transform + ' rotateZ(0deg)',
-          icon.style.transform + ' rotateZ(360deg)'
-        ] },
+        {
+          transform: [
+            icon.style.transform + ' rotateZ(0deg)',
+            icon.style.transform + ' rotateZ(360deg)'
+          ]
+        },
         { iterations: Infinity, duration: 1500, easing: 'linear' }
       );
       break;
     case 'coin':
       icon.animate(
-        { transform:[
-          icon.style.transform + ' rotateY(0deg)',
-          icon.style.transform + ' rotateY(360deg)'
-        ] },
+        {
+          transform: [
+            icon.style.transform + ' rotateY(0deg)',
+            icon.style.transform + ' rotateY(360deg)'
+          ]
+        },
         { iterations: Infinity, duration: 1000, easing: 'linear' }
       );
       break;
@@ -140,7 +189,11 @@ const onPointerDown = e => {
   [sx, sy] = getXY(e);
   ly = sy;
   dy = 0;
-  scrollY = getScrollY(e.target);
+
+  // Cache layout references once
+  scrollContainer = getScrollParent(e.target);
+  scrollY = getScrollPos(scrollContainer);
+
   strokeSize = (distance + CoolRefresh.ini.size) / VV.scale;
 };
 
@@ -165,11 +218,11 @@ const onPointerMove = e => {
   }
   ly = y
   dy = y - sy;
-  if (dy < 0 && !CoolRefresh.ini.pageBottom)  {
+  if (dy < 0 && !CoolRefresh.ini.pageBottom) {
     cancel();
     return;
   }
-  if (scrollY !== getScrollY(e.target)) {
+  if (scrollY !== getScrollPos(scrollContainer)) {
     cancel();
     return;
   }
@@ -208,7 +261,7 @@ CoolRefresh.loadIni = async () => {
   const res = await browser.storage.local.get('cool_refresh');
   if (res?.cool_refresh) {
     Object.assign(CoolRefresh.ini, res.cool_refresh);
-    distance = CoolRefresh.ini.distance|0;
+    distance = CoolRefresh.ini.distance | 0;
   }
   if (icon) {
     applyCss();
